@@ -1,0 +1,179 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Tableau de bord</h1>
+
+        <div class="row">
+            <!-- Statistiques générales -->
+            <div class="col-md-3 mb-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Livres</h5>
+                        <h2 class="card-text">{{ totalBooks }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Réservations actives</h5>
+                        <h2 class="card-text">{{ activeReservations }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Utilisateurs</h5>
+                        <h2 class="card-text">{{ totalUsers }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Livres en stock faible</h5>
+                        <h2 class="card-text">{{ lowStockBooks|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Livres en stock faible -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Livres en stock faible</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if lowStockBooks %}
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Titre</th>
+                                            <th>Stock</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for book in lowStockBooks %}
+                                            <tr>
+                                                <td>{{ book.title }}</td>
+                                                <td>{{ book.quantity }}</td>
+                                                <td>
+                                                    <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-sm btn-warning">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">Aucun livre en stock faible.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Répartition par catégorie -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Livres par catégorie</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Répartition par langue -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Livres par langue</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="languageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Répartition des réservations -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Statut des réservations</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="reservationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block javascripts %}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // Graphique des catégories
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'pie',
+                data: {
+                    labels: {{ booksByCategory|map(b => b['category'])|json_encode|raw }},
+                    datasets: [{
+                        data: {{ booksByCategory|map(b => b['count'])|json_encode|raw }},
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF'
+                        ]
+                    }]
+                }
+            });
+
+            // Graphique des langues
+            new Chart(document.getElementById('languageChart'), {
+                type: 'pie',
+                data: {
+                    labels: {{ booksByLanguage|map(b => b['language'])|json_encode|raw }},
+                    datasets: [{
+                        data: {{ booksByLanguage|map(b => b['count'])|json_encode|raw }},
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56'
+                        ]
+                    }]
+                }
+            });
+
+            // Graphique des réservations
+            new Chart(document.getElementById('reservationChart'), {
+                type: 'pie',
+                data: {
+                    labels: {{ reservationsByStatus|map(r => r['status'])|json_encode|raw }},
+                    datasets: [{
+                        data: {{ reservationsByStatus|map(r => r['count'])|json_encode|raw }},
+                        backgroundColor: [
+                            '#4BC0C0',
+                            '#FF6384',
+                            '#FFCE56'
+                        ]
+                    }]
+                }
+            });
+        </script>
+    {% endblock %}
+{% endblock %} 

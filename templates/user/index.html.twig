@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des utilisateurs - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Gestion des utilisateurs</h1>
+
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Liste des utilisateurs</h5>
+                <a href="{{ path('app_user_new') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Nouvel utilisateur
+                </a>
+            </div>
+            <div class="card-body">
+                {% if users %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Rôle</th>
+                                    <th>Dernière connexion</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    <tr>
+                                        <td>{{ user.firstName }} {{ user.lastName }}</td>
+                                        <td>{{ user.email }}</td>
+                                        <td>
+                                            {% if 'ROLE_ADMIN' in user.roles %}
+                                                <span class="badge bg-danger">Administrateur</span>
+                                            {% elseif 'ROLE_LIBRARIAN' in user.roles %}
+                                                <span class="badge bg-warning">Bibliothécaire</span>
+                                            {% else %}
+                                                <span class="badge bg-info">Utilisateur</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ user.lastLogin ? user.lastLogin|date('d/m/Y H:i') : 'Jamais' }}</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');" class="d-inline">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                                    <button class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucun utilisateur trouvé.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %} 

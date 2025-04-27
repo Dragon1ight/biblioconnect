@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des auteurs{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Liste des auteurs</h1>
+            <a href="{{ path('app_author_new') }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Nouvel auteur
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Nombre de livres</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for author in authors %}
+                            <tr>
+                                <td>{{ author.name }}</td>
+                                <td>{{ author.books|length }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ path('app_author_edit', {'id': author.id}) }}" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-edit"></i> Modifier
+                                        </a>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <form method="post" action="{{ path('app_author_delete', {'id': author.id}) }}" style="display: inline-block"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet auteur ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ author.id) }}">
+                                                <button class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center">Aucun auteur trouvé</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau commentaire - {{ book.title }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Ajouter un commentaire</h1>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">{{ book.title }}</h5>
+                <h6 class="card-subtitle mb-3 text-muted">par {{ book.author }}</h6>
+            </div>
+        </div>
+
+        {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+            <div class="mb-3">
+                {{ form_label(form.rating) }}
+                <div class="rating-choices">
+                    {{ form_widget(form.rating) }}
+                </div>
+                {{ form_errors(form.rating) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.content) }}
+                {{ form_widget(form.content, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.content) }}
+                <div class="form-text">
+                    Minimum 10 caractères, maximum 1000 caractères.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Envoyer</button>
+                <a href="{{ path('app_book_show', {'id': book.id}) }}" class="btn btn-secondary">Annuler</a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+
+    <style>
+        .rating-choices {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .rating-choices input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        .rating-choices label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %} 

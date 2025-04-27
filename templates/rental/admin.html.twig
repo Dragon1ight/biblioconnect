@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des emprunts - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Gestion des emprunts</h1>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Emprunts</h5>
+            </div>
+            <div class="card-body">
+                {% if rentals %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Livre</th>
+                                    <th>Utilisateur</th>
+                                    <th>Date début</th>
+                                    <th>Date fin</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rental in rentals %}
+                                    <tr>
+                                        <td><a href="{{ path('app_book_show', {'id': rental.book.id}) }}">{{ rental.book.title }}</a></td>
+                                        <td>{{ rental.userId.email }}</td>
+                                        <td>{{ rental.rentFrom|date('d/m/Y') }}</td>
+                                        <td>{{ rental.rentTo|date('d/m/Y') }}</td>
+                                        <td>
+                                            {% if rental.returned %}
+                                                <span class="badge bg-success">Rendu</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">En cours</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucun emprunt trouvé.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %} 

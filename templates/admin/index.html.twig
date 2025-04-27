@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration - BiblioConnect{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Tableau de bord d'administration</h1>
+
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total des livres</h5>
+                        <p class="card-text display-4">{{ totalBooks }}</p>
+                        <a href="{{ path('app_book_index') }}" class="btn btn-light">Gérer les livres</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 mb-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total des utilisateurs</h5>
+                        <p class="card-text display-4">{{ totalUsers }}</p>
+                        <a href="{{ path('app_user_index') }}" class="btn btn-light">Gérer les utilisateurs</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 mb-4">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Total des emprunts</h5>
+                        <p class="card-text display-4">{{ totalRentals }}</p>
+                        <a href="{{ path('app_rental_admin') }}" class="btn btn-light">Gérer les emprunts</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 mb-4">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h5 class="card-title">Emprunts actifs</h5>
+                        <p class="card-text display-4">{{ activeRentals }}</p>
+                        <a href="{{ path('app_rental_admin') }}" class="btn btn-light">Voir les emprunts actifs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Actions rapides</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <a href="{{ path('app_book_new') }}" class="btn btn-primary btn-lg w-100 mb-3">
+                                    <i class="fas fa-plus"></i> Ajouter un livre
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="{{ path('app_rental_admin') }}" class="btn btn-success btn-lg w-100 mb-3">
+                                    <i class="fas fa-book"></i> Gérer les emprunts
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="{{ path('app_user_index') }}" class="btn btn-info btn-lg w-100 mb-3">
+                                    <i class="fas fa-users"></i> Gérer les utilisateurs
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Mon profil</h1>
+
+        <div class="row">
+            <!-- Informations personnelles -->
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Informations personnelles</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <p class="mb-1"><strong>Nom :</strong></p>
+                            <p>{{ app.user.firstName }} {{ app.user.lastName }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <p class="mb-1"><strong>Email :</strong></p>
+                            <p>{{ app.user.email }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <p class="mb-1"><strong>Rôle :</strong></p>
+                            <p>
+                                {% if 'ROLE_ADMIN' in app.user.roles %}
+                                    <span class="badge bg-danger">Administrateur</span>
+                                {% elseif 'ROLE_LIBRARIAN' in app.user.roles %}
+                                    <span class="badge bg-warning">Bibliothécaire</span>
+                                {% else %}
+                                    <span class="badge bg-info">Utilisateur</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="d-grid">
+                            <a href="{{ path('app_profile_edit') }}" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Modifier mes informations
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mes réservations -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Mes réservations</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if reservations %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Livre</th>
+                                            <th>Date de réservation</th>
+                                            <th>Statut</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for reservation in reservations %}
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ path('app_book_show', {'id': reservation.book.id}) }}">
+                                                        {{ reservation.book.title }}
+                                                    </a>
+                                                </td>
+                                                <td>{{ reservation.createdAt|date('d/m/Y H:i') }}</td>
+                                                <td>
+                                                    {% if reservation.status == 'active' %}
+                                                        <span class="badge bg-success">Active</span>
+                                                    {% elseif reservation.status == 'completed' %}
+                                                        <span class="badge bg-info">Terminée</span>
+                                                    {% else %}
+                                                        <span class="badge bg-danger">Annulée</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if reservation.status == 'active' %}
+                                                        <form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+                                                            <button class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-times"></i> Annuler
+                                                            </button>
+                                                        </form>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">Vous n'avez aucune réservation pour le moment.</p>
+                            <div class="d-grid">
+                                <a href="{{ path('app_book_index') }}" class="btn btn-primary">
+                                    <i class="fas fa-book"></i> Consulter le catalogue
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

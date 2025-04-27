@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier {{ user.email }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h1>Modifier {{ user.email }}</h1>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+                            <div class="mb-3">
+                                {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.email, {'attr': {'class': 'text-danger'}}) }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form_label(form.firstName, 'Prénom', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.firstName, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.firstName, {'attr': {'class': 'text-danger'}}) }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form_label(form.lastName, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.lastName, {'attr': {'class': 'text-danger'}}) }}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form_label(form.address, 'Adresse', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }}
+                                {{ form_errors(form.address, {'attr': {'class': 'text-danger'}}) }}
+                            </div>
+
+                            <div class="mb-4">
+                                {{ form_label(form.roles, 'Rôles', {'label_attr': {'class': 'form-label'}}) }}
+                                <div class="form-check">
+                                    {{ form_widget(form.roles, {'attr': {'class': 'form-check-input'}}) }}
+                                </div>
+                                {{ form_errors(form.roles, {'attr': {'class': 'text-danger'}}) }}
+                            </div>
+
+                            <div class="mt-4 d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                                <a href="{{ path('app_user_index') }}" class="btn btn-secondary ms-2">Retour</a>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

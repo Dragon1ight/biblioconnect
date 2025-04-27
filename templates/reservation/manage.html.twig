@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des réservations - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Gestion des réservations</h1>
+
+        {% if reservations is empty %}
+            <div class="alert alert-info">
+                Aucune réservation n'a été effectuée.
+            </div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Utilisateur</th>
+                            <th>Livre</th>
+                            <th>Date de réservation</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in reservations %}
+                            <tr>
+                                <td>{{ reservation.user.firstname }} {{ reservation.user.lastname }}</td>
+                                <td>
+                                    <a href="{{ path('app_book_show', {'id': reservation.book.id}) }}">
+                                        {{ reservation.book.title }}
+                                    </a>
+                                </td>
+                                <td>{{ reservation.createdAt|date('d/m/Y H:i') }}</td>
+                                <td>
+                                    {% if reservation.status == 'active' %}
+                                        <span class="badge bg-success">En cours</span>
+                                    {% elseif reservation.status == 'completed' %}
+                                        <span class="badge bg-info">Terminée</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Annulée</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.status == 'active' %}
+                                        <form method="post" action="{{ path('app_reservation_complete', {'id': reservation.id}) }}" style="display: inline-block">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('complete' ~ reservation.id) }}">
+                                            <button class="btn btn-sm btn-success" onclick="return confirm('Marquer cette réservation comme terminée ?')">
+                                                Terminer
+                                            </button>
+                                        </form>
+                                        
+                                        <form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" style="display: inline-block">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+                                            <button class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')">
+                                                Annuler
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %} 

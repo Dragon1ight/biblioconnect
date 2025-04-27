@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des réservations - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Gestion des réservations</h1>
+
+        <!-- Filtres -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <select name="status" class="form-select">
+                            <option value="">Tous les statuts</option>
+                            <option value="active" {% if app.request.query.get('status') == 'active' %}selected{% endif %}>Actives</option>
+                            <option value="completed" {% if app.request.query.get('status') == 'completed' %}selected{% endif %}>Terminées</option>
+                            <option value="cancelled" {% if app.request.query.get('status') == 'cancelled' %}selected{% endif %}>Annulées</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                     <input type="text" name="search" class="form-control" placeholder="Rechercher par titre ..." value="{{ app.request.query.get('search') }}">
+                  
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Filtrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Liste des réservations -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Réservations</h5>
+            </div>
+            <div class="card-body">
+                {% if reservations %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Livre</th>
+                                    {% if is_granted('ROLE_ADMIN') or is_granted ('ROLE_LIBRARIAN') %}
+                                    <th>Utilisateur</th>
+                                    {% endif %}
+                                    <th>Date de réservation</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reservation in reservations %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ path('app_book_show', {'id': reservation.book.id}) }}">
+                                                {{ reservation.book.title }}
+                                            </a>
+                                        </td>
+                                        {% if is_granted('ROLE_ADMIN') or is_granted ('ROLE_LIBRARIAN') %}
+                                        <td>{{ reservation.user.firstName }} {{ reservation.user.lastName }}</td>
+                                        {% endif %}
+                                        <td>{{ reservation.createdAt|date('d/m/Y H:i') }}</td>
+                                        <td>
+                                            {% if reservation.status == 'active' %}
+                                                <span class="badge bg-success">Active</span>
+                                            {% elseif reservation.status == 'completed' %}
+                                                <span class="badge bg-info">Terminée</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Annulée</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                {% if reservation.status == 'active' %}
+                                                    {% if is_granted('ROLE_LIBRARIAN') %}
+                                                        <form method="post" action="{{ path('app_reservation_complete', {'id': reservation.id}) }}" class="d-inline">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token('complete' ~ reservation.id) }}">
+                                                            <button class="btn btn-sm btn-info">
+                                                                <i class="fas fa-check"></i> Terminer
+                                                            </button>
+                                                        </form>
+                                                    {% endif %}
+                                                    <form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+                                                        <button class="btn btn-sm btn-danger">
+                                                            <i class="fas fa-times"></i> Annuler
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Aucune réservation trouvée.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %} 

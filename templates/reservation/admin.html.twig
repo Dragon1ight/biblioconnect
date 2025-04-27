@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des réservations{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Gestion des réservations</h1>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Utilisateur</th>
+                                <th>Livre</th>
+                                <th>Date de réservation</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reservation in reservations %}
+                                {% if reservation.isActive %}
+                                    <tr>
+                                        <td>{{ reservation.user.email }}</td>
+                                        <td>
+                                            <a href="{{ path('app_book_show', {'id': reservation.book.id}) }}">
+                                                {{ reservation.book.title }}
+                                            </a>
+                                        </td>
+                                        <td>{{ reservation.reservedAt|date('d/m/Y H:i') }}</td>
+                                        <td>
+                                            {% if reservation.notifiedAt %}
+                                                <span class="badge bg-success">Disponible</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">En attente</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" style="display: inline-block">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+                                                <button class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')">
+                                                    Annuler
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Aucune réservation active</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

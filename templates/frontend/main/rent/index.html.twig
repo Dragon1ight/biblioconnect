@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catalogue{% endblock %}
+
+{% block body %}
+<div class="row g-5">
+    <div class="col-md-12">
+        <h2>Emprunts</h2>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% if app.user.rentals.count < 1 %}
+            <div class="alert alert-info">
+                Vous n'avez actuellement aucun emprunt
+            </div>
+        {% else %}
+            <table class="table table-responsive table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Auteur</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Temps restant</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for position in app.user.rentals %}
+                    <tr>
+                        <td>{{ position.id }}</td>
+                        <td>{{ position.itemId.name }}</td>
+                        <td>
+                            {% for author in position.itemID.author %}
+                                {{ author.name }}
+                            {% endfor %}
+                        </td>
+                        <td>{{ position.itemId.theme }}</td>
+                        <td>
+                            {% if position.returned %}
+                                <span style="color: green">Rendu</span>
+                            {% else %}
+                                {% set difference = date(position.rentTo).diff(date('now')) %}
+                                {% set leftDays = difference.days %}
+                                {% if leftDays == 1 %}
+                                    1 jour, retournez le livre !
+                                {% elseif leftDays == 0 %}
+                                    Temps écoulé, retournez immédiatement le livre !
+                                {% else %}
+                                    {{ leftDays }} jours restants
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="btn btn-light" href="{{ path('app_book_details', {id: position.itemId.id}) }}">Détails</a>
+                            {% if not position.returned %}
+                                <a class="btn btn-light" href="{{ path('app_book_return', {id: position.id}) }}">Retourner</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

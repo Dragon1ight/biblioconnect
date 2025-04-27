@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modération des commentaires - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Modération des commentaires</h1>
+
+        {% if comments is empty %}
+            <div class="alert alert-info">
+                Aucun commentaire en attente de modération.
+            </div>
+        {% else %}
+            <div class="row">
+                {% for comment in comments %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>{{ comment.user.firstname }} {{ comment.user.lastname }}</span>
+                                <small class="text-muted">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="{{ path('app_book_show', {'id': comment.book.id}) }}">
+                                        {{ comment.book.title }}
+                                    </a>
+                                </h5>
+                                <div class="mb-2">
+                                    {% for i in 1..5 %}
+                                        <i class="fas fa-star {% if i <= comment.rating %}text-warning{% else %}text-muted{% endif %}"></i>
+                                    {% endfor %}
+                                </div>
+                                <p class="card-text">{{ comment.content }}</p>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <form method="post" action="{{ path('app_comment_approve', {'id': comment.id}) }}" style="display: inline-block">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('approve' ~ comment.id) }}">
+                                        <button class="btn btn-success">
+                                            <i class="fas fa-check"></i> Approuver
+                                        </button>
+                                    </form>
+                                    
+                                    <form method="post" action="{{ path('app_comment_reject', {'id': comment.id}) }}" style="display: inline-block">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('reject' ~ comment.id) }}">
+                                        <button class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir rejeter ce commentaire ?')">
+                                            <i class="fas fa-times"></i> Rejeter
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %} 

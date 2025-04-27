@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Emprunter un livre{% endblock %}
+
+{% block body %}
+    <div class="row g-5">
+        <div class="col-md-6">
+            <h2>Formulaire de prêt</h2>
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            {% if app.user %}
+                {{ form_start(form) }}
+
+                {{ form_row(form.itemId, {
+                    label: 'Choisissez un livre'
+                }) }}
+                {{ form_row(form.rentFrom, {
+                    label: 'Début du prêt'
+                }) }}
+                {{ form_row(form.rentTo, {
+                    label: 'Fin du prêt'
+                }) }}
+                {{ form_row(form.submit, {
+                    label: 'Louer'
+                }) }}
+                {{ form_end(form) }}
+            {% else %}
+                <div class="alert alert-danger">
+                    <p>
+                        Vous devez être connecté pour emprunter un livre
+                    </p>
+                    <p>
+                        <a class="btn btn-primary" href="{{ path('app_login') }}">Se connecter</a>
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

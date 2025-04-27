@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catalogue{% endblock %}
+
+{% block body %}
+<div class="row g-5">
+    <div class="col-md-12">
+        <h2>Articles disponibles</h2>
+
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-sm-12 col-md-6">
+                {{ form_row(form.searchPattern, {
+                    'label': 'Entrez un auteur, thème ou un titre'
+                }) }}
+            </div>
+            <div class="col-12">
+                <div class="activity__form__submit">
+                    {{ form_row(form.submit, {
+                        'label': 'Rechercher'
+                    }) }}
+                </div>
+            </div>
+        </div>
+        {{ form_end(form) }}
+
+        <table class="table table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Auteur</th>
+                    <th scope="col">Thème</th>
+                    <th scope="col">Disponibilité</th>
+                    <th scope="col">Avis</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for position in catalog %}
+                    <tr>
+                        <td>{{ position.id }}</td>
+                        <td>{{ position.name }}</td>
+                        <td>
+                            {% for author in position.author %}
+                                {{ author.name }}
+                            {% endfor %}
+                        </td>
+                        <td>{{ position.theme }}</td>
+                        <td>{{ position.availability.available }} / {{ position.availability.total }}</td>
+                        <td>
+                            <a class="btn btn-light" href="{{ path('app_book_details', {id: position.id}) }}">Détails</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

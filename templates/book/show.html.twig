@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ book.title }} - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <!-- Informations du livre -->
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h1 class="card-title">{{ book.title }}</h1>
+                        <h2 class="h5 text-muted mb-4">par {{ book.author }}</h2>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <p><strong>Catégorie :</strong> {{ book.category }}</p>
+                                <p><strong>Langue :</strong> {{ book.language }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Stock disponible :</strong> 
+                                    <span class="badge {% if book.quantity <= 5 %}bg-warning{% else %}bg-success{% endif %}">
+                                        {{ book.quantity }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h3 class="h5">Thème</h3>
+                            <p>{{ book.theme }}</p>
+                        </div>
+
+                        {% if is_granted('ROLE_LIBRARIAN') %}
+                            <div class="mt-4">
+                                <a href="{{ path('app_book_edit', {'id': book.id}) }}" class="btn btn-warning">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Commentaires -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="h5 mb-0">Commentaires</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if is_granted('ROLE_USER') %}
+                            <div class="mb-4">
+                                <h4 class="h6">Ajouter un commentaire</h4>
+                                {{ form_start(commentForm) }}
+                                    {{ form_row(commentForm.rating) }}
+                                    {{ form_row(commentForm.content) }}
+                                    <div class="mt-3">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-comment"></i> Publier
+                                        </button>
+                                    </div>
+                                {{ form_end(commentForm) }}
+                            </div>
+                        {% endif %}
+
+                        {% if comments|length > 0 %}
+                            <div class="comments-list">
+                                {% for comment in comments %}
+                                    <div class="comment mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h5 class="h6 mb-0">{{ comment.user.firstName }} {{ comment.user.lastName }}</h5>
+                                            <small class="text-muted">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
+                                        </div>
+                                        <p class="mt-2 mb-0">{{ comment.content }}</p>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <form method="post" action="{{ path('app_comment_delete', {'id': comment.id}) }}" class="mt-2" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                                                <button class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i> Supprimer
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                    {% if not loop.last %}
+                                        <hr>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted">Aucun commentaire pour le moment.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        {% if is_granted('ROLE_USER') %}
+                            {% if book.quantity > 0 %}
+                                <div class="d-grid gap-2">
+                                    <a href="{{ path('app_reservation_new', {'id': book.id}) }}" class="btn btn-success">
+                                        <i class="fas fa-book"></i> Réserver ce livre
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle"></i> Ce livre n'est actuellement pas disponible.
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> Connectez-vous pour réserver ce livre.
+                            </div>
+                        {% endif %}
+
+                        <hr>
+
+                        <div class="d-grid gap-2">
+                            <a href="{{ path('app_book_index') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour au catalogue
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 
