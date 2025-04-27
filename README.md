@@ -27,9 +27,11 @@ php bin/phpunit
 ADMIN:
 - Login : admin@biblioconnect.fr
 - Mot de passe : password
+  
 LIBRARIEN:
 - Login : librarien@biblioconnect.fr
 - Mot de passe : password
+  
 USER:
 - Login : user@biblioconnect.fr
 - Mot de passe : password
