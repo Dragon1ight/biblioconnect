@@ -32,3 +32,19 @@ USER:
 - Mot de passe : password
 
 
+🧪 Test de charge avec Locust
+
+pip install locust
+locust -f locustfile.py --host=https://localhost:8000
+
+Résultats des tests de performance
+Test avec 170 utilisateurs
+
+Moyenne temps de réponse : 15s
+
+0% d’erreurs HTTP dans la dernière simulation
+
+Fichiers de résultats dans /docs/ ou racine du projet
+
+📎 Liens utiles
+Documentation Locust: https://locust.io/
