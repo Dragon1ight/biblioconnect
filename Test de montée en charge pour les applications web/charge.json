@@ -1,5 +1,5 @@
 {
-  "users_total": 2000,
-  "users_concurrent": 170,
+  "users_total": 1000,
+  "users_concurrent": 50,
   "load_pattern": "ramp-up: 5min -> plateau: 20min -> pic: 3min -> down: 5min"
 }
