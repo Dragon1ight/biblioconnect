@@ -43,6 +43,8 @@ pip install locust
 locust -f locustfile.py --host=http://localhost:8000
 OU
 python -m locust -f locustfile.py --host=http://localhost:8000
+Ou 
+locust -f locustfile.py --host=http://localhost:8000 --users 50 --spawn-rate 10
  
 
 Résultats des tests de performance
