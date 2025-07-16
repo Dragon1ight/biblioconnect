@@ -40,7 +40,12 @@ USER:
 🧪 Test de charge avec Locust
 
 pip install locust
-locust -f locustfile.py --host=https://localhost:8000
+locust -f locustfile.py --host=http://localhost:8000
+OU
+locust --host http://127.0.0.1:8000
+OU
+python -m locust -f locustfile.py --host=http://localhost:8000
+ 
 
 Résultats des tests de performance
 Test avec 170 utilisateurs
