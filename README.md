@@ -42,8 +42,6 @@ USER:
 pip install locust
 locust -f locustfile.py --host=http://localhost:8000
 OU
-locust --host http://127.0.0.1:8000
-OU
 python -m locust -f locustfile.py --host=http://localhost:8000
  
 
