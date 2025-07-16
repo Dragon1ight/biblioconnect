@@ -6,6 +6,7 @@ use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -28,6 +29,7 @@ class Book
     private ?string $language = null;
 
     #[ORM\Column]
+    #[Assert\PositiveOrZero(message: "La quantité doit être un nombre positif ou nul.")]
     private ?int $quantity = null;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
